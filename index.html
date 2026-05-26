@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="뽀모도로" />
+  <meta name="theme-color" content="#0f0e17" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="apple-touch-icon" href="icons/icon-192.png" />
+  <title>🍅 뽀모도로</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Bebas+Neue&family=Noto+Sans+KR:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- 배경 -->
+  <div class="bg-layer">
+    <div class="noise"></div>
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+  </div>
+
+  <div class="app-wrapper">
+    <!-- 헤더 -->
+    <header class="header">
+      <div class="logo">
+        <span class="tomato-icon">🍅</span>
+        <span class="logo-text">JUNODORO</span>
+      </div>
+      <button class="settings-btn" id="settingsBtn" aria-label="설정">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="3"/>
+          <path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/>
+        </svg>
+      </button>
+    </header>
+
+    <!-- 모드 탭 -->
+    <div class="mode-tabs">
+      <button class="tab active" data-mode="focus">집중</button>
+      <button class="tab" data-mode="short">휴식</button>
+    </div>
+
+    <!-- 타이머 링 -->
+    <main class="timer-section">
+      <div class="ring-container">
+        <svg class="ring-svg" viewBox="0 0 320 320">
+          <circle class="ring-bg" cx="160" cy="160" r="148"/>
+          <circle class="ring-progress" id="ringProgress" cx="160" cy="160" r="148"/>
+        </svg>
+        <div class="timer-inner">
+          <div class="mode-label" id="modeLabel">집중 시간</div>
+          <div class="time-display" id="timeDisplay">25:00</div>
+          <div class="session-count">
+            <span id="sessionDots"></span>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- 컨트롤 버튼 -->
+    <div class="controls">
+      <!-- 왼쪽: 재시작(초기화) -->
+      <button class="btn-secondary" id="resetBtn" aria-label="재시작">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+          <path d="M3 3v5h5"/>
+        </svg>
+      </button>
+
+      <!-- 가운데: 시작/일시정지 -->
+      <button class="btn-primary" id="startBtn">
+        <span class="btn-label" id="btnLabel">시작</span>
+        <div class="btn-ripple"></div>
+      </button>
+
+      <!-- 오른쪽: 멈춤 -->
+      <button class="btn-secondary" id="stopBtn" aria-label="멈춤">
+        <!-- 정지 아이콘 (두 세로 막대) -->
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+          <rect x="5" y="4" width="4" height="16" rx="1.5"/>
+          <rect x="15" y="4" width="4" height="16" rx="1.5"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- 통계 -->
+    <div class="stats-bar">
+      <div class="stat-item">
+        <span class="stat-value" id="todaySessions">0</span>
+        <span class="stat-label">오늘 완료</span>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-item">
+        <span class="stat-value" id="todayMinutes">0</span>
+        <span class="stat-label">집중 분</span>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-item">
+        <span class="stat-value" id="totalSessions">0</span>
+        <span class="stat-label">누적 세션</span>
+      </div>
+    </div>
+
+    <!-- 완료 토마토 -->
+    <div class="tomato-row" id="tomatoRow"></div>
+  </div>
+
+  <!-- 설정 모달 -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 class="modal-title">설정</h2>
+        <button class="modal-close" id="modalClose">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="setting-section-label">시간 설정</div>
+
+        <div class="setting-row">
+          <label class="setting-label">집중 시간</label>
+          <div class="drag-time-picker" id="focusDragPicker" data-target="focusTime" data-min="1" data-max="90">
+            <div class="drag-arrow">
+              <svg width="10" height="6" viewBox="0 0 10 6" fill="none">
+                <path d="M1 5L5 1L9 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+              <svg width="10" height="6" viewBox="0 0 10 6" fill="none">
+                <path d="M1 1L5 5L9 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <span class="drag-value" id="focusTimeDisplay">25</span>
+            <span class="drag-unit">분</span>
+          </div>
+        </div>
+
+        <div class="setting-row">
+          <label class="setting-label">휴식 시간</label>
+          <div class="drag-time-picker" id="shortDragPicker" data-target="shortTime" data-min="1" data-max="60">
+            <div class="drag-arrow">
+              <svg width="10" height="6" viewBox="0 0 10 6" fill="none">
+                <path d="M1 5L5 1L9 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+              <svg width="10" height="6" viewBox="0 0 10 6" fill="none">
+                <path d="M1 1L5 5L9 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <span class="drag-value" id="shortTimeDisplay">5</span>
+            <span class="drag-unit">분</span>
+          </div>
+        </div>
+
+        <div class="setting-section-label" style="margin-top:4px;">테마 색상</div>
+
+        <div class="setting-row">
+          <label class="setting-label">집중 색상</label>
+          <div class="color-swatches" id="focusColorSwatches"></div>
+        </div>
+        <div class="setting-row">
+          <label class="setting-label">휴식 색상</label>
+          <div class="color-swatches" id="shortColorSwatches"></div>
+        </div>
+
+        <div class="setting-section-label" style="margin-top:4px;">기타</div>
+
+        <div class="setting-row">
+          <label class="setting-label">알림음</label>
+          <label class="toggle">
+            <input type="checkbox" id="soundToggle" checked />
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <div class="setting-row">
+          <label class="setting-label">자동 시작</label>
+          <label class="toggle">
+            <input type="checkbox" id="autoStartToggle" />
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-save" id="saveSettings">저장</button>
+        <button class="btn-reset-stats" id="resetStats">기록 초기화</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 커스텀 확인 다이얼로그 -->
+  <div class="confirm-overlay" id="confirmOverlay">
+    <div class="confirm-box">
+      <p class="confirm-msg" id="confirmMsg"></p>
+      <div class="confirm-actions">
+        <button class="confirm-btn confirm-no"  id="confirmNo">아니요</button>
+        <button class="confirm-btn confirm-yes" id="confirmYes">예</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 토스트 -->
+  <div class="toast" id="toast"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
