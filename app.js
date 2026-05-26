@@ -15,7 +15,7 @@ const COLOR_PALETTE = [
 
 // ── 기본 설정값 ──────────────────────────────────────────────
 const DEFAULT_SETTINGS = {
-  focusTime:   25,
+  focusTime:   50,
   shortTime:   5,
   sound:       true,
   autoStart:   false,
