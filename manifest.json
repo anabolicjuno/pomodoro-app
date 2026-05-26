@@ -2,7 +2,7 @@
   "name": "뽀모도로 타이머",
   "short_name": "뽀모도로",
   "description": "집중력을 높이는 나만의 뽀모도로 타이머",
-  "start_url": "/index.html",
+  "start_url": "/pomodoro-app/index.html",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#0f0e17",
